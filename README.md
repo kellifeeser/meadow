@@ -1,6 +1,6 @@
 # meadow
 
-**<u>M</u>icroarray<u> E</u>xpression <u>A</u>nalysis & <u>D</u>ata <u>O</u>rganization <u>W</u>orkflow**
+**<ins>M</ins>icroarray<ins> E</ins>xpression <ins>A</ins>nalysis & <ins>D</ins>ata <ins>O</ins>rganization <ins>W</ins>orkflow**
 
 ------------------------------------------------------------------------
 
