@@ -1,6 +1,6 @@
 # meadow
 
-[**M**]{.underline}**icroarray [E]{.underline}xpression [A]{.underline}nalysis & [D]{.underline}ata [O]{.underline}rganization [W]{.underline}orkflow**
+<u>**M**</u>**icroarray <u>E</u>xpression <u>A</u>nalysis & <u>D</u>ata <u>O</u>rganization <u>W</u>orkflow**
 
 ------------------------------------------------------------------------
 
@@ -21,38 +21,7 @@
 
 -   **Directory hierarchy**
 
-    `meadow/
-    ├── docs/                      
-    │   ├── project_overview.md    
-    │   ├── acronyms_list.md       
-    │   └── requirements.md        
-    │
-    ├── config/                    
-    │   ├── geo_ids.yaml           
-    │   ├── normalization.yaml     
-    │   └── gene_panel.yaml        
-    │
-    ├── scripts/                   
-    │   ├── 01_acquire_metadata.R  
-    │   ├── 02_process_microarray.R
-    │   ├── 03_integration_eval.R  
-    │   └── 04_export_ai_ready.R   
-    │
-    ├── workflows/                 
-    │   └── pipeline_diagram.svg   
-    │
-    ├── metadata/                  
-    │   ├── study_metadata_template.csv
-    │   └── sample_metadata_template.csv
-    │
-    ├── reports/                   
-    │   ├── QC_plan.md             
-    │   └── integration_strategy.md
-    │
-    ├── output/                    
-    │   └── ai_ready_matrix.csv    
-    │
-    └── README.md`
+    `meadow/ ├── docs/                       │   ├── project_overview.md     │   ├── acronyms_list.md        │   └── requirements.md         │ ├── config/                     │   ├── geo_ids.yaml            │   ├── normalization.yaml      │   └── gene_panel.yaml         │ ├── scripts/                    │   ├── 01_acquire_metadata.R   │   ├── 02_process_microarray.R │   ├── 03_integration_eval.R   │   └── 04_export_ai_ready.R    │ ├── workflows/                  │   └── pipeline_diagram.svg    │ ├── metadata/                   │   ├── study_metadata_template.csv │   └── sample_metadata_template.csv │ ├── reports/                    │   ├── QC_plan.md              │   └── integration_strategy.md │ ├── output/                     │   └── ai_ready_matrix.csv     │ └── README.md`
 
 -   **Draft stub docs & configs**
 
@@ -61,7 +30,7 @@
 
 -   **Establish conventions**
 
----
+------------------------------------------------------------------------
 
 ### Phase 2: Data Acquisition & Metadata Extraction
 
@@ -69,7 +38,7 @@
 -   Extract study-level metadata (title, platform, organism, publication date) and sample-level metadata (treatment, timepoint, cell line) into `metadata/study_metadata.csv` and `metadata/sample_metadata.csv`.
 -   Flag missing fields and annotate via Llama (using `reticulate`)
 
----
+------------------------------------------------------------------------
 
 ### Phase 3: Microarray Preprocessing, QC & Normalization
 
@@ -81,14 +50,14 @@
 -   Qualityassessment with `affyPLM` (probe-level models, NUSE/RLE) and `arrayQualityMetrics` (automated QC report); **filter** out poor-quality arrays.
 -   Normalize cleaned data via `preprocessCore::normalize.quantiles()` (quantile) or `vsn::justVSN()` (variance-stabilizing); save as `ExpressionSet` or `SummarizedExperiment`.
 
----
+------------------------------------------------------------------------
 
 ### Phase 4: Cross-Study Integration Evaluation
 
 -   Batch-correct across studies using `sva::ComBat` or `limma::removeBatchEffect`; optionally prototype the **GEDI** workflow.
 -   Evaluate integration quality via silhouette scores, PCA clustering, etc., and capture results in `reports/integration_strategy.md`.
 
----
+------------------------------------------------------------------------
 
 ### Phase 5: AI-Ready Data Transformation & Export
 
