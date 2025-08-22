@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="KF 1st draft, no revision yet" />
 
+<meta name="date" content="2025-08-22" />
 
-<title>README</title>
+<title>Platform Metadata Plan</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -348,161 +350,188 @@ display: none;
 
 
 
+<h1 class="title toc-ignore">Platform Metadata Plan</h1>
+<h4 class="author">KF 1st draft, no revision yet</h4>
+<h4 class="date">2025-08-22</h4>
 
 </div>
 
-
-<div id="meadow" class="section level1">
-<h1>meadow</h1>
-<div id="microarray-expression-analysis-data-organization-workflow" class="section level2">
-<h2><strong><ins>M</ins>icroarray<ins> E</ins>xpression
-<ins>A</ins>nalysis &amp; <ins>D</ins>ata <ins>O</ins>rganization
-<ins>W</ins>orkflow</strong></h2>
-<div id="phase-1-environment-project-scaffolding" class="section level3">
-<h3>Phase 1: Environment &amp; Project Scaffolding</h3>
+<div id="TOC">
 <ul>
-<li><p><strong>Initialize project</strong></p>
-<ul>
-<li>Create an RStudio project file (<code>meadow.Rproj</code>) at the
-repo root.</li>
-<li>Activate <code>renv</code> to snapshot and manage all package
-versions (R 4.x, Bioconductor 3.x).</li>
-</ul></li>
-<li><p><strong>Version control &amp; CI</strong></p>
-<ul>
-<li>Initialize a Git repository, add a <code>.gitignore</code>, and make
-an initial scaffold commit.</li>
-<li>Configure a GitHub Actions workflow to run on each push or pull
-request (or other?):
-<ul>
-<li>Restore the environment (<code>renv::restore()</code>)</li>
-<li>Run each stub script in <code>scripts/</code> to ensure they load
-without errors</li>
-</ul></li>
-<li>Move code/scripts to target destination or stay in Github for now
-(?)</li>
-</ul></li>
-<li><p><strong>Directory hierarchy</strong></p>
-<p><code>meadow/</code><br />
-<code>├── docs/</code><br />
-<code>│   ├── project_overview.md</code><br />
-<code>│   ├── acronyms_list.md</code><br />
-<code>│   ├── platform_metadata_plan.Rmd</code><br />
-<code>│   └── requirements.md</code><br />
-<code>│   ├── config/</code><br />
-<code>│   ├── geo_ids.yaml</code><br />
-<code>│   ├── normalization.yaml</code><br />
-<code>│   └── gene_panel.yaml</code><br />
-<code>├── scripts/</code><br />
-<code>│   ├── 01_acquire_metadata.R</code><br />
-<code>│   ├── 02_process_microarray.R</code><br />
-<code>│   ├── 03_integration_eval.R</code><br />
-<code>│   └── 04_export_ai_ready.R</code><br />
-<code>├── workflows/</code><br />
-<code>│   └── pipeline_diagram.svg</code><br />
-<code>├── metadata/</code><br />
-<code>│   ├── platform_metadata.csv</code><br />
-<code>│   ├── study_metadata_template.csv</code><br />
-<code>│   └── sample_metadata_template.csv</code><br />
-<code>├── reports/</code><br />
-<code>│   ├── QC_plan.md</code><br />
-<code>│   └── integration_strategy.md</code><br />
-<code>├── output/</code><br />
-<code>│    └── ai_ready_matrix.csv</code><br />
-<code>│ └── README.md</code><br />
-</p></li>
+<li><a href="#purpose" id="toc-purpose">Purpose</a></li>
+<li><a href="#metadata-fields" id="toc-metadata-fields">Metadata
+Fields</a></li>
+<li><a href="#how-well-use-these-fields" id="toc-how-well-use-these-fields">How We’ll Use These Fields</a></li>
+<li><a href="#storage-format" id="toc-storage-format">Storage
+Format</a></li>
+<li><a href="#next-steps" id="toc-next-steps">Next Steps</a></li>
 </ul>
+</div>
+
+<hr />
+<div id="purpose" class="section level1">
+<h1>Purpose</h1>
+<p>This document outlines which platform-level fields we could
+potentially capture for each GEO GPL record, where to find them, and how
+they’ll drive preprocessing, annotation and integration. Note these are
+the max amount of fields I could come up with, not all will be available
+or necessary?</p>
+<hr />
+</div>
+<div id="metadata-fields" class="section level1">
+<h1>Metadata Fields</h1>
+<table>
+<colgroup>
+<col width="28%" />
+<col width="28%" />
+<col width="42%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Source</th>
+<th>Why we need it/could use it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>platform_id</strong></td>
+<td><code>gpl@header$geo_accession</code></td>
+<td>Unique GPL accession (e.g. GPL570)</td>
+</tr>
+<tr class="even">
+<td><strong>platform_title</strong></td>
+<td><code>gpl@header$title</code></td>
+<td>Human-readable name (“Affymetrix Human Genome U133 Plus 2.0”)</td>
+</tr>
+<tr class="odd">
+<td><strong>organism</strong></td>
+<td><code>gpl@header$organism</code></td>
+<td>Confirm species (keep human only)</td>
+</tr>
+<tr class="even">
+<td><strong>manufacturer</strong></td>
+<td><code>gpl@header$manufacturer</code></td>
+<td>Choose the right Bioconductor package (affy, lumi, limma)</td>
+</tr>
+<tr class="odd">
+<td><strong>technology</strong></td>
+<td><code>gpl@header$technology</code></td>
+<td>“In situ oligonucleotide array” vs. “BeadArray”</td>
+</tr>
+<tr class="even">
+<td><strong>molecule</strong></td>
+<td><code>gpl@header$molecule</code></td>
+<td>Input type (total RNA, mRNA)—informs QC expectations</td>
+</tr>
+<tr class="odd">
+<td><strong>channel_count</strong></td>
+<td>parse from <code>gpl@header$channel_count</code>*</td>
+<td>1-color vs. 2-color arrays → affects normalization method</td>
+</tr>
+<tr class="even">
+<td><strong>num_probes</strong></td>
+<td><code>length(featureData(gpl))</code></td>
+<td>Array density (use for rough QC and resource planning)</td>
+</tr>
+<tr class="odd">
+<td><strong>genome_build</strong></td>
+<td><code>gpl@header$data_processing</code> or table</td>
+<td>Ensure correct probe→gene mapping</td>
+</tr>
+<tr class="even">
+<td><strong>annotation_pkg</strong></td>
+<td>lookup via Bioconductor (e.g. hgu133plus2.db)</td>
+<td>Automate probe-to-gene conversion</td>
+</tr>
+<tr class="odd">
+<td><strong>control_prefix</strong></td>
+<td>infer from <code>dataTable@table</code> columns</td>
+<td>Identify spike-ins and negative controls for QC plots</td>
+</tr>
+<tr class="even">
+<td><strong>data_processing</strong></td>
+<td><code>gpl@header$data_processing</code></td>
+<td>Notes on any GEO-applied preprocessing</td>
+</tr>
+<tr class="odd">
+<td><strong>instrument_model</strong></td>
+<td><code>gpl@header$instrument_model</code>*</td>
+<td>Potential batch covariate if scanners vary</td>
+</tr>
+<tr class="even">
+<td><strong>hybridization_protocol</strong></td>
+<td><code>gpl@header$hybridization_protocol</code>*</td>
+<td>Source of batch variation, reproducibility notes</td>
+</tr>
+</tbody>
+</table>
+<p>* May be missing on some platforms; capture when present.</p>
 <p><br />
 </p>
-<ul>
-<li><p><strong>Draft stub docs &amp; configs</strong></p>
-<ul>
-<li>In <code>docs/</code>, draft <code>project_overview.md</code>, list
-acronym candidates in <code>acronyms_list.md</code>, capture open
-questions in <code>requirements.md</code></li>
-<li>In <code>config/</code>, create commented YAML templates for
-`geo_ids`, `normalization`, and `gene_panel`</li>
-</ul></li>
-<li><p><strong>Establish conventions</strong></p>
-<ul>
-<li><p>In <code>docs/</code>, draft platform-level metadata fields to
-extract if available and plan for usage downstream in
-<code>platform_metadata_plan.Rmd</code>. See <a href="docs/platform_metadata_plan.html">html link</a></p>
-<ul>
-<li>In the <code>metadata/</code> folder, the extracted metadata will be
-stored in <code>platform_metadata.csv</code>, with one row per
-<code>platform_id</code> and these columns captured verbatim or parsed
-as needed.</li>
-</ul></li>
-</ul></li>
-</ul>
 <hr />
 </div>
-<div id="phase-2-data-acquisition-metadata-extraction" class="section level3">
-<h3>Phase 2: Data Acquisition &amp; Metadata Extraction</h3>
+<div id="how-well-use-these-fields" class="section level1">
+<h1>How We’ll Use These Fields</h1>
+<ol style="list-style-type: decimal">
+<li><strong>Route to preprocessing</strong>
 <ul>
-<li>Fetch study summaries via <code>rentrez::entrez_summary()</code> and
-download raw &amp; processed microarray data with
-<code>GEOquery::getGEO()</code> into <code>ExpressionSet</code>
-objects.</li>
-<li>Extract study-level metadata (title, platform, organism, publication
-date) and sample-level metadata (treatment, timepoint, cell line) into
-<code>metadata/study_metadata.csv</code> and
-<code>metadata/sample_metadata.csv</code>.</li>
-<li>Flag missing fields and annotate via Llama (using
-<code>reticulate</code>)</li>
-</ul>
-<hr />
-</div>
-<div id="phase-3-microarray-preprocessing-qc-normalization" class="section level3">
-<h3>Phase 3: Microarray Preprocessing, QC &amp; Normalization</h3>
-<ul>
-<li>Detect platform per study (Affymetrix vs. Illumina vs. Agilent) from
-metadata.</li>
-<li>Preprocess raw data using the matching Bioconductor package:
-<ul>
-<li><strong>Affymetrix</strong>: <code>affy</code> or
-<code>oligo</code></li>
-<li><strong>Illumina</strong>: <code>lumi</code> (or
-<code>beadarray</code> for bead-level)</li>
-<li><strong>Agilent</strong>: <code>limma::read.maimages()</code></li>
+<li><code>manufacturer</code> + <code>technology</code> → select
+<code>affy</code>/<code>oligo</code>, <code>lumi</code>, or
+<code>limma::read.maimages()</code>.<br />
+</li>
+<li><code>channel_count</code> → choose appropriate 1-color or 2-color
+normalization.</li>
 </ul></li>
-<li>Qualityassessment with <code>affyPLM</code> (probe-level models,
-NUSE/RLE) and <code>arrayQualityMetrics</code> (automated QC report);
-<strong>filter</strong> out poor-quality arrays.</li>
-<li>Normalize cleaned data via
-<code>preprocessCore::normalize.quantiles()</code> (quantile) or
-<code>vsn::justVSN()</code> (variance-stabilizing); save as
-<code>ExpressionSet</code> or <code>SummarizedExperiment</code>.</li>
-</ul>
+<li><strong>Annotation mapping</strong>
+<ul>
+<li><code>platform_id</code> → determine the correct Bioconductor
+annotation package.</li>
+<li><code>genome_build</code> → align probes to the right gene
+model.</li>
+</ul></li>
+<li><strong>Quality control</strong>
+<ul>
+<li><code>num_probes</code> → flag outlier arrays with too many/few
+probes.</li>
+<li><code>control_prefix</code> → isolate control probes for QC
+diagnostics.</li>
+</ul></li>
+<li><strong>Batch metadata</strong>
+<ul>
+<li><code>instrument_model</code> and
+<code>hybridization_protocol</code> → record potential batch
+factors.</li>
+<li><code>data_processing</code> notes → avoid redundant
+preprocessing.</li>
+</ul></li>
+</ol>
+<p><br />
+</p>
 <hr />
 </div>
-<div id="phase-4-cross-study-integration-evaluation" class="section level3">
-<h3>Phase 4: Cross-Study Integration Evaluation</h3>
-<ul>
-<li>Batch-correct across studies using <code>sva::ComBat</code> or
-<code>limma::removeBatchEffect</code>; optionally prototype the
-<strong>GEDI</strong> workflow.</li>
-<li>Evaluate integration quality via silhouette scores, PCA clustering,
-etc., and capture results in
-<code>reports/integration_strategy.md</code>.</li>
-</ul>
+<div id="storage-format" class="section level1">
+<h1>Storage Format</h1>
+<p>Extract these fields into a single CSV:</p>
+<pre class="csv"><code>platform_id,platform_title,organism,manufacturer,technology,...
+GPL570,Affymetrix Human Genome U133 Plus 2.0,Homo sapiens,Affymetrix,In situ oligonucleotide array,...</code></pre>
+<p><strong>Save as:</strong></p>
+<p><code>metadata/platform_metadata.csv</code>.</p>
+<p>Each row corresponds to one platform (identified by its GPL
+accession, i.e. <code>platform_id</code>). We’ll capture all fields
+verbatim or parse them as needed.</p>
 <hr />
 </div>
-<div id="phase-5-ai-ready-data-transformation-export" class="section level3">
-<h3>Phase 5: AI-Ready Data Transformation &amp; Export</h3>
+<div id="next-steps" class="section level1">
+<h1>Next Steps</h1>
 <ul>
-<li><p>Target(?) curated gene/protein panel in
-<code>config/gene_panel.yaml</code>.</p></li>
-<li><p>Extract a filtered sample-by-gene matrix from each normalized
-study(?) and transform to target standards and formatting</p></li>
-<li><p>Flag control samples (mock-infected, cell lines) in
-metadata.</p></li>
-<li><p>Export the final AI-ready dataset as CSV/HDF5/JSON/other in
-<code>output/ai_ready_matrix.{csv,h5}</code>.</p></li>
+<li><p>Decide which of these we really need</p></li>
+<li><p>Implement extraction in
+<code>scripts/01_acquire_metadata.R</code>.</p></li>
+<li><p>Review and refine field parsing logic.</p></li>
+<li><p>Populate <code>metadata/platform_metadata.csv</code> with first
+batch of GEO platforms.</p></li>
 </ul>
-</div>
-</div>
 </div>
 
 

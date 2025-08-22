@@ -1,0 +1,88 @@
+---
+title: "Platform Metadata Plan"
+author: "KF 1st draft, no revision yet"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+------------------------------------------------------------------------
+
+# Purpose
+
+This document outlines which platform-level fields we could potentially capture for each GEO GPL record, where to find them, and how they’ll drive preprocessing, annotation and integration. Note these are the max amount of fields I could come up with, not all will be available or necessary?
+
+------------------------------------------------------------------------
+
+# Metadata Fields
+
+| Field | Source | Why we need it/could use it |
+|----------------------|----------------------|---------------------------------|
+| **platform_id** | `gpl@header$geo_accession` | Unique GPL accession (e.g. GPL570) |
+| **platform_title** | `gpl@header$title` | Human-readable name (“Affymetrix Human Genome U133 Plus 2.0”) |
+| **organism** | `gpl@header$organism` | Confirm species (keep human only) |
+| **manufacturer** | `gpl@header$manufacturer` | Choose the right Bioconductor package (affy, lumi, limma) |
+| **technology** | `gpl@header$technology` | “In situ oligonucleotide array” vs. “BeadArray” |
+| **molecule** | `gpl@header$molecule` | Input type (total RNA, mRNA)—informs QC expectations |
+| **channel_count** | parse from `gpl@header$channel_count`\* | 1-color vs. 2-color arrays → affects normalization method |
+| **num_probes** | `length(featureData(gpl))` | Array density (use for rough QC and resource planning) |
+| **genome_build** | `gpl@header$data_processing` or table | Ensure correct probe→gene mapping |
+| **annotation_pkg** | lookup via Bioconductor (e.g. hgu133plus2.db) | Automate probe-to-gene conversion |
+| **control_prefix** | infer from `dataTable@table` columns | Identify spike-ins and negative controls for QC plots |
+| **data_processing** | `gpl@header$data_processing` | Notes on any GEO-applied preprocessing |
+| **instrument_model** | `gpl@header$instrument_model`\* | Potential batch covariate if scanners vary |
+| **hybridization_protocol** | `gpl@header$hybridization_protocol`\* | Source of batch variation, reproducibility notes |
+
+\* May be missing on some platforms; capture when present.
+
+\
+
+------------------------------------------------------------------------
+
+# How We’ll Use These Fields
+
+1.  **Route to preprocessing**
+    -   `manufacturer` + `technology` → select `affy`/`oligo`, `lumi`, or `limma::read.maimages()`.\
+    -   `channel_count` → choose appropriate 1-color or 2-color normalization.
+2.  **Annotation mapping**
+    -   `platform_id` → determine the correct Bioconductor annotation package.
+    -   `genome_build` → align probes to the right gene model.
+3.  **Quality control**
+    -   `num_probes` → flag outlier arrays with too many/few probes.
+    -   `control_prefix` → isolate control probes for QC diagnostics.
+4.  **Batch metadata**
+    -   `instrument_model` and `hybridization_protocol` → record potential batch factors.
+    -   `data_processing` notes → avoid redundant preprocessing.
+
+\
+
+------------------------------------------------------------------------
+
+# Storage Format
+
+Extract these fields into a single CSV:
+
+``` csv
+platform_id,platform_title,organism,manufacturer,technology,...
+GPL570,Affymetrix Human Genome U133 Plus 2.0,Homo sapiens,Affymetrix,In situ oligonucleotide array,...
+```
+
+**Save as:**
+
+`metadata/platform_metadata.csv`.
+
+Each row corresponds to one platform (identified by its GPL accession, i.e. `platform_id`). We’ll capture all fields verbatim or parse them as needed.
+
+------------------------------------------------------------------------
+
+# Next Steps
+
+-   Decide which of these we really need
+
+-   Implement extraction in `scripts/01_acquire_metadata.R`.
+
+-   Review and refine field parsing logic.
+
+-   Populate `metadata/platform_metadata.csv` with first batch of GEO platforms.

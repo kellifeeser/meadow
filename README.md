@@ -1,7 +1,6 @@
 # meadow
 
-**<u>M</u>icroarray<u> E</u>xpression <u>A</u>nalysis & <u>D</u>ata <u>O</u>rganization <u>W</u>orkflow**
-
+**<ins>M</ins>icroarray<ins> E</ins>xpression <ins>A</ins>nalysis & <ins>D</ins>ata <ins>O</ins>rganization <ins>W</ins>orkflow**
 ------------------------------------------------------------------------
 
 ### Phase 1: Environment & Project Scaffolding
@@ -9,7 +8,7 @@
 -   **Initialize project**
 
     -   Create an RStudio project file (`meadow.Rproj`) at the repo root.
-    -   Activate **`renv`** to snapshot and manage all package versions (R 4.x, Bioconductor 3.x).
+    -   Activate `renv` to snapshot and manage all package versions (R 4.x, Bioconductor 3.x).
 
 -   **Version control & CI**
 
@@ -21,7 +20,35 @@
 
 -   **Directory hierarchy**
 
-    `meadow/ ├── docs/                       │   ├── project_overview.md     │   ├── acronyms_list.md        │   └── requirements.md         │ ├── config/                     │   ├── geo_ids.yaml            │   ├── normalization.yaml      │   └── gene_panel.yaml         │ ├── scripts/                    │   ├── 01_acquire_metadata.R   │   ├── 02_process_microarray.R │   ├── 03_integration_eval.R   │   └── 04_export_ai_ready.R    │ ├── workflows/                  │   └── pipeline_diagram.svg    │ ├── metadata/                   │   ├── study_metadata_template.csv │   └── sample_metadata_template.csv │ ├── reports/                    │   ├── QC_plan.md              │   └── integration_strategy.md │ ├── output/                     │   └── ai_ready_matrix.csv     │ └── README.md`
+    `meadow/`\
+    `├── docs/`\
+    `│   ├── project_overview.md`\
+    `│   ├── acronyms_list.md`\
+    `│   ├── platform_metadata_plan.Rmd`\
+    `│   └── requirements.md`\
+    `│   ├── config/`\
+    `│   ├── geo_ids.yaml`\
+    `│   ├── normalization.yaml`\
+    `│   └── gene_panel.yaml`\
+    `├── scripts/`\
+    `│   ├── 01_acquire_metadata.R`\
+    `│   ├── 02_process_microarray.R`\
+    `│   ├── 03_integration_eval.R`\
+    `│   └── 04_export_ai_ready.R`\
+    `├── workflows/`\
+    `│   └── pipeline_diagram.svg`\
+    `├── metadata/`\
+    `│   ├── platform_metadata.csv`\
+    `│   ├── study_metadata_template.csv`\
+    `│   └── sample_metadata_template.csv`\
+    `├── reports/`\
+    `│   ├── QC_plan.md`\
+    `│   └── integration_strategy.md`\
+    `├── output/`\
+    `│    └── ai_ready_matrix.csv`\
+    `│ └── README.md`\
+
+\
 
 -   **Draft stub docs & configs**
 
@@ -29,6 +56,10 @@
     -   In `config/`, create commented YAML templates for \`geo_ids\`, \`normalization\`, and \`gene_panel\`
 
 -   **Establish conventions**
+
+    -   In `docs/`, draft platform-level metadata fields to extract if available and plan for usage downstream in `platform_metadata_plan.Rmd`. See [html link](docs/platform_metadata_plan.html)
+
+        -   In the `metadata/` folder, the extracted metadata will be stored in `platform_metadata.csv`, with one row per `platform_id` and these columns captured verbatim or parsed as needed.
 
 ------------------------------------------------------------------------
 
